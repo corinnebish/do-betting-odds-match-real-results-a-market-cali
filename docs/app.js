@@ -50,7 +50,7 @@ $('#evidence-horse').innerHTML=rows.map(h=>`<option value="${h.program}">${esc(h
 $('#download').addEventListener('click',()=>{const columns=Object.keys(rows[0]),cell=v=>'"'+String(v).replace(/"/g,'""')+'"',csv=[columns.map(cell).join(','),...filtered.map(h=>columns.map(c=>cell(h[c])).join(','))].join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='kentucky-derby-2024-'+$('#field-filter').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 // US story: six recorded running positions, not simulated result data.
 const calls=['quarter','half','three_quarters','mile','stretch','finish'],callNames=['At the quarter-mile','At the half-mile','At three-quarter mile','At one mile','Into the home stretch','At the finish'],distances=['¼ mile','½ mile','¾ mile','1 mile','Home stretch','Finish'];
-const us=[...D.us].sort((a,b)=>a.finish-b.finish),colors=h=>h.program===chosenHorse?'#90abff':h.program===3?'#1F4FD8':h.program===17?'#d48648':'#58739a';
+const us=[...D.us].sort((a,b)=>a.finish-b.finish),colors=h=>h.program===17?'#d48648':h.program===3?'#1F4FD8':h.program===chosenHorse?'#90abff':'#58739a';
 $('#us-winner-chance').textContent=pct(us[0].fair_implied);
 $('#horse-select').innerHTML=us.map(h=>`<option value="${h.program}">${esc(h.horse)}</option>`).join('');
 $('#us-table').innerHTML=us.map(h=>`<tr><td>${h.finish}</td><td>${esc(h.horse)}</td><td>${h.odds_to_one.toFixed(2)} to 1</td><td>${h.market_rank}</td><td>${pct(h.fair_implied)}</td></tr>`).join('');
@@ -62,17 +62,21 @@ function drawReplay(){
  const x=d3.scaleLinear().domain([20,1]).range([25,w-15]),y=d3.scaleBand().domain(us.map(h=>h.program)).range([0,h]).padding(.24);
  g.append('g').attr('class','grid').call(d3.axisBottom(x).ticks(5).tickSize(h).tickFormat(''));g.selectAll('.grid text').remove();
  g.append('text').attr('x',0).attr('y',-14).style('font-size','8px').text('BACK OF THE FIELD');g.append('text').attr('x',w).attr('y',-14).attr('text-anchor','end').style('font-size','8px').text('LEADER →');
- const lanes=g.selectAll('.horse-lane').data(us).join('g').attr('class','horse-lane').attr('transform',d=>`translate(0,${y(d.program)})`).attr('tabindex',0).attr('role','button').attr('aria-label',d=>`Follow ${d.horse}, finished ${ordinal(d.finish)}`).style('cursor','pointer');
+ const lanes=g.selectAll('.horse-lane').data(us).join('g').attr('class','horse-lane').attr('transform',d=>`translate(0,${y(d.program)})`).attr('tabindex',0).attr('role','button').attr('aria-label',d=>`Follow ${d.horse}${d.program===17?', orange: pre-race favorite with the lowest odds':d.program===3?', blue: the race winner':''}, finished ${ordinal(d.finish)}`).style('cursor','pointer');
+ lanes.append('rect').attr('x',-105).attr('width',w+120).attr('height',y.bandwidth()).attr('fill','transparent');
+ lanes.append('title').text(d=>`${d.horse}${d.program===17?' — orange marks the pre-race favorite (lowest odds: 3.21 to 1)':d.program===3?' — blue marks the race winner':''}. Finished ${ordinal(d.finish)}.`);
  lanes.append('line').attr('x2',w).attr('y1',y.bandwidth()/2).attr('y2',y.bandwidth()/2).attr('stroke','#ffffff09');
  lanes.append('text').attr('x',-10).attr('y',y.bandwidth()/2+3).attr('text-anchor','end').style('font-size','9px').text(d=>d.horse.replace(' (JPN)','').length>15?d.horse.slice(0,13)+'…':d.horse.replace(' (JPN)',''));
  const icons=lanes.append('g').attr('class','horse-icon');icons.append('path').attr('d','M-10,1L-14,-3L-16,-2L-14,2L-10,3L-8,7L-5,7L-6,2L1,2L4,7L7,7L4,1L7,-4L10,-3L12,-5L8,-8L5,-7L2,-3L-6,-4Z').attr('stroke','#ffffff25').attr('stroke-width',.5);icons.append('circle').attr('cx',-2).attr('cy',-7).attr('r',2).attr('fill','#fff');
  const ranks=lanes.append('text').attr('class','rank-label').attr('y',y.bandwidth()/2+3).style('font-size','8px');
- activate(lanes,h=>chooseHorse(h.program));lanes.on('pointermove',(e,h)=>tip(e,h.horse,[['Recorded final odds',h.odds_to_one.toFixed(2)+' to 1'],['Official finish',ordinal(h.finish)]])).on('pointerleave',hideTip);
+ activate(lanes,h=>chooseHorse(h.program));
+ const showHorseTip=(e,h)=>tip(e,h.horse,[[h.program===17?'Why orange?':h.program===3?'Why blue?':'Highlight',h.program===17?'Pre-race favorite · lowest odds':h.program===3?'Official race winner':h.program===chosenHorse?'Horse you are following':'Other starter'],['Final odds',h.odds_to_one.toFixed(2)+' to 1'],['Official finish',ordinal(h.finish)]]);
+ lanes.on('pointermove',showHorseTip).on('pointerleave',hideTip).on('focus',showHorseTip).on('blur',hideTip);
  replayDrawing={icons,lanes,ranks,x,y};updateReplay();
 }
 function updateReplay(){
  if(!replayDrawing)return;const {icons,lanes,ranks,x,y}=replayDrawing;
- icons.attr('transform',h=>`translate(${x(currentRank(h))},${y.bandwidth()/2})`).select('path').attr('fill',colors);
+ icons.attr('transform',h=>`translate(${x(currentRank(h))},${y.bandwidth()/2})`).select('path').attr('fill',colors).attr('stroke',h=>h.program===chosenHorse?'#fff':'#ffffff25').attr('stroke-width',h=>h.program===chosenHorse?1.5:.5);
  lanes.select('text').style('fill',h=>h.program===chosenHorse?'#fff':'#9db0d0');
  ranks.attr('x',h=>Math.max(8,x(currentRank(h))-21)).attr('text-anchor','end').style('fill',h=>h.program===chosenHorse?'#fff':'#9db0d0').text(h=>Math.round(currentRank(h)));
  const idx=Math.round(progress),leader=[...us].sort((a,b)=>currentRank(a)-currentRank(b))[0];$('#call-label').textContent=callNames[idx];$('#race-distance').textContent=distances[idx];$('#leader-label').textContent=(progress>=5?'Winner: ':'Leader: ')+leader.horse;
