@@ -1,5 +1,9 @@
 # Against the odds · The 2024 Kentucky Derby
 
+**[Open the live interactive project →](https://pc-do-betting-odds-match-real-results-a-mar-2uen7v5wuq-uc.a.run.app/)**
+
+View the complete project in your browser. **No installation, download, or account required.**
+
 An interactive USA-only portfolio story by Corinne Bish, written for people who do not follow horse racing.
 
 The entire project covers the **2024 Kentucky Derby at Churchill Downs, Louisville, Kentucky, USA**, on May 4, 2024. It contains all 20 starters from one real American race.
@@ -27,7 +31,10 @@ US odds-to-one describe profit. Adding one includes the original stake. Raw chan
 
 All race observations in the project are from the USA. Horse names may carry breeding-country suffixes; these do not indicate another race venue. This is an independent historical portfolio project, not a live betting or prediction service. No paid feed or API key is required.
 
-## Run and rebuild
+<details>
+<summary>Developer setup and deployment (optional)</summary>
+
+## Run locally and rebuild
 
 ```bash
 pip install -r requirements.txt
@@ -49,3 +56,5 @@ Static preview: `python -m http.server 8765 --directory docs`. Optional browser 
 ## Deployment
 
 The Google Cloud Run address requires a repository Actions secret named `GCP_SA_KEY`. Once configured, pushes to `main` or **Actions → Redeploy to Cloud Run → Run workflow** verify the app and deploy it. The last deployment attempt was blocked because that secret was missing; a repository update alone does not update the live service.
+
+</details>
