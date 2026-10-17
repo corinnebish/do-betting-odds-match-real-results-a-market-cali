@@ -1,82 +1,24 @@
 {
-  "headline": "Longshots (odds of 15 or more) win 2.4% of the time against 0.1% implied by the odds, so they win more often than the market says.",
-  "rows_analyzed": 356430,
-  "date_range": "1979-09-22 to 2018-06-27",
-  "metrics": [
-    {
-      "label": "Runners analysed",
-      "value": "356,430",
-      "explanation": "Priced runners across 1,500 races."
-    },
-    {
-      "label": "Average market margin",
-      "value": "96.8%",
-      "explanation": "How much the raw implied chances add up to above 100 percent, shown as a share of the total."
-    },
-    {
-      "label": "Short odds win rate",
-      "value": "21.5% vs 1.2%",
-      "explanation": "Actual win rate against the margin-free implied rate for runners with odds under 5."
-    },
-    {
-      "label": "Long odds win rate",
-      "value": "2.4% vs 0.1%",
-      "explanation": "Actual win rate against the margin-free implied rate for runners with odds of 15 or more."
-    },
-    {
-      "label": "Calibration slope",
-      "value": "0.73",
-      "explanation": "1.00 means odds are perfectly calibrated. Below 1 means the market overrates longshots relative to favorites."
-    }
+  "rows_analyzed": 14182,
+  "races": 1150,
+  "date_range": [
+    "2016-09-28",
+    "2018-06-27"
   ],
-  "findings": [
-    {
-      "statement": "Longshots and favorites are not priced equally fairly.",
-      "evidence": "Long odds runners win 2.4% against 0.1% implied. Short odds runners win 21.5% against 1.2% implied.",
-      "so_what": "Review the price of the bands with the biggest gap first, because that is where price and result differ most."
-    },
-    {
-      "statement": "A flat bet on every runner returns different amounts in different odds groups.",
-      "evidence": "Betting 1 unit on every runner returns -31.6% overall, -38.3% on short odds and -31.4% on long odds.",
-      "so_what": "Use return per unit staked by odds group as a simple monthly pricing health metric."
-    },
-    {
-      "statement": "The calibration regression shows how far the odds are from fair.",
-      "evidence": "The slope is 0.73 (standard error 0.01) where 1.00 is perfect. 0 odds bands look too harsh and 8 too generous out of 8 bands, using 95 percent intervals.",
-      "so_what": "Track the slope over time and by track. A falling slope would signal growing longshot bias."
-    },
-    {
-      "statement": "Pricing gaps differ by track.",
-      "evidence": "For long odds runners, S has the lowest gap (+1.1 points, 25,822 runners) and HV has the highest (+2.8 points, 39,516 runners).",
-      "so_what": "Focus commercial review on the tracks with the biggest gaps and check them against competitor prices."
-    }
-  ],
-  "method_notes": [
-    {
-      "method": "SQL-style aggregation",
-      "why": "Grouping runners into odds bands and counting wins gives a direct actual versus implied comparison.",
-      "alternative": "A plain scatter of every runner was not used because each point is only a win or a loss and shows nothing."
-    },
-    {
-      "method": "Segmentation analysis",
-      "why": "Splitting by track, race class and odds group shows where prices are off, not only whether they are off overall.",
-      "alternative": "One overall number was not used because it hides local gaps. Very small segments are dropped to avoid noise."
-    },
-    {
-      "method": "Logistic regression with clustered errors",
-      "why": "Regressing win on the log-odds of the implied chance gives one slope that summarises bias. Runners in the same race are linked, so errors are clustered by race.",
-      "alternative": "A simple correlation or a chi-square test was not used because they do not say which direction the bias runs."
-    }
-  ],
-  "caveats": [
-    "Final odds (winning_odds) are assumed to be decimal odds that include the returned stake, so the implied chance is 1 divided by the odds.",
-    "Implied chances are scaled to add to 100 percent in each race, which removes the bookmaker margin before comparing.",
-    "Runners with missing or zero odds were removed as non-runners. A runner that truly started but has no price would slightly distort its race.",
-    "Priced runners with no numeric placing (for example pulled up) count as non-winners.",
-    "Dead heats count as wins for each horse involved, which slightly raises win rates.",
-    "Track means the race_location column and race type means the race_class column. Other race details were not used.",
-    "Data was scraped from public websites and the license is not stated, so check reuse terms before sharing.",
-    "This covers pool-style racing markets. It cannot show how FanDuel or competitors price the same races.",
-    "Bands marked too harsh or too generous are statistical signals on past races, not proof of future gaps."
-  ]
+  "roi": -0.26425750951910876,
+  "slope": {
+    "term": "slope",
+    "estimate": 1.0722114373576959,
+    "std_error": 0.03606457867430868,
+    "ci_low": 1.0015261620384395,
+    "ci_high": 1.1428967126769523
+  },
+  "audit": {
+    "catalog_races": 1539,
+    "retained_races": 1150,
+    "retained_runners": 14182,
+    "excluded_races": 389,
+    "key": "date + venue + race number",
+    "singapore_excluded": true
+  }
 }

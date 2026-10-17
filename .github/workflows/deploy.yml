@@ -1,11 +1,23 @@
 name: Redeploy to Cloud Run
-# Run this by hand from the Actions tab: "Run workflow".
+# Deploy verified changes to the existing service on main, or run manually.
 # It needs one repository secret, GCP_SA_KEY (see the README section "Redeploying").
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt pytest
+      - run: python -m pytest -q
   deploy:
+    needs: verify
     runs-on: ubuntu-latest
     permissions:
       contents: read
