@@ -36,13 +36,18 @@
     // Raised inner and outer rails, with small physical fence posts.
     for(let i=0;i<80;i++){const t=i/80*Math.PI*2;[0,1].forEach(k=>{const a=k?8.85:5.82,b=k?5.12:2.12;box(.045,.32,.045,mats.white,a*Math.cos(t),.37,b*Math.sin(t));});}
     ovalLine(8.85,5.12,.55,0xffffff,.8);ovalLine(5.82,2.12,.55,0xffffff,.8);
-    // Infield sculpture and miniature grandstand.
+    // Infield sculpture.
     for(let i=-3;i<=3;i++){const strip=box(8.2,.018,.18,mats.blue,0,.31,i*.42);strip.material = new T.MeshStandardMaterial({color:0x193d78,roughness:1});}
-    box(3.4,.35,1.15,mats.edge,-2.5,.43,-2.1);for(let r=0;r<3;r++){box(3.2,.18,.35,r===2?mats.white:mats.gray,-2.5,.6+r*.18,-2.25+r*.24);for(let c=0;c<12;c++)box(.17,.18,.18,c%4===0?mats.orange:mats.blue,-3.95+c*.26,.74+r*.18,-2.25+r*.24);}
-    const roof=box(3.8,.12,1.75,mats.white,-2.5,1.7,-2.08);roof.rotation.z=.04;
-    [-4,-1].forEach(x=>box(.07,1.1,.07,mats.gray,x,1.13,-2.65));
-    // Finish gantry and checker stripe.
     const finishAngle=.78;const fx=Math.cos(finishAngle),fz=Math.sin(finishAngle);
+    // Miniature grandstand outside the outer rail, facing the track at the finish line as on a real homestretch.
+    // Local z points outward along the track's normal; seating rows rise away from the rail.
+    const stand=new T.Group();const nx=fx/9.2,nz=fz/5.5,nl=Math.hypot(nx,nz);
+    stand.position.set(9.2*fx+nx/nl*1.05,0,5.5*fz+nz/nl*1.05);stand.rotation.y=Math.atan2(nx,nz);world.add(stand);
+    box(4.1,.9,1.9,mats.edge,0,-.2,.1,stand);
+    box(3.4,.35,1.15,mats.edge,0,.43,0,stand);for(let r=0;r<3;r++){box(3.2,.18,.35,r===2?mats.white:mats.gray,0,.6+r*.18,-.15+r*.24,stand);for(let c=0;c<12;c++)box(.17,.18,.18,c%4===0?mats.orange:mats.blue,-1.45+c*.26,.74+r*.18,-.15+r*.24,stand);}
+    const roof=box(3.8,.12,1.75,mats.white,0,1.7,.02,stand);roof.rotation.z=.04;
+    [-1.5,1.5].forEach(x=>box(.07,1.1,.07,mats.gray,x,1.13,-.55,stand));
+    // Finish gantry and checker stripe.
     const gantry=new T.Group();gantry.position.set((5.82+8.85)/2*fx,0,(2.12+5.12)/2*fz);
     // Local z spans the vector from the inner rail to the outer rail.
     gantry.rotation.y=Math.atan2((8.85-5.82)*fx,(5.12-2.12)*fz);world.add(gantry);
@@ -76,7 +81,7 @@
     const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
     leaders.setAttribute('class','scene-leaders');labelLayer.prepend(leaders);
     const callouts=[
-      {el:labelLayer.querySelector('.label-a'),parent:world,point:new T.Vector3(-2.5,1.8,-2.08),height:2.4},
+      {el:labelLayer.querySelector('.label-a'),parent:stand,point:new T.Vector3(0,1.8,.02),height:2.4},
       {el:labelLayer.querySelector('.label-b'),parent:gantry,point:new T.Vector3(0,2.2,0),height:2.8}
     ].map(c=>{c.line=document.createElementNS(ns,'line');leaders.append(c.line);return c;});
     function updateLabels(){
@@ -85,7 +90,7 @@
       leaders.setAttribute('viewBox',`0 0 ${width} ${height}`);
       callouts.forEach(c=>{
         const anchor=c.parent.localToWorld(c.point.clone());
-        const elevated=anchor.clone();elevated.y+=width<500 && c.parent===world ? 1.4 : c.height;
+        const elevated=anchor.clone();elevated.y+=width<500 && c.parent===stand ? 1.4 : c.height;
         const screen=anchor.project(camera),top=elevated.project(camera);
         const ax=(screen.x+1)*width/2,ay=(1-screen.y)*height/2;
         const x=Math.max(c.el.offsetWidth/2+8,Math.min(width-c.el.offsetWidth/2-8,(top.x+1)*width/2));
