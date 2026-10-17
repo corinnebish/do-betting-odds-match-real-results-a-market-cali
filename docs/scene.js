@@ -7,7 +7,6 @@
   const fallback = () => {
     mount.innerHTML = `<svg viewBox="0 0 800 500" role="img" aria-label="Illustrated oval racing track"><defs><linearGradient id="track-shade" x2="0" y2="1"><stop stop-color="#6283c9"/><stop offset="1" stop-color="#1F4FD8"/></linearGradient></defs><ellipse cx="400" cy="310" rx="340" ry="160" fill="#071329"/><ellipse cx="400" cy="275" rx="340" ry="155" fill="url(#track-shade)"/><ellipse cx="400" cy="275" rx="245" ry="98" fill="#0a1f44"/><ellipse cx="400" cy="275" rx="291" ry="125" fill="none" stroke="#fff" stroke-opacity=".55" stroke-dasharray="8 12"/><path d="M400 373V430" stroke="#fff" stroke-width="14"/><path d="M400 373V430" stroke="#0a1f44" stroke-width="7" stroke-dasharray="7 7"/><text x="210" y="320" font-size="85">🏇</text><text x="420" y="185" font-size="70">🏇</text><text x="550" y="350" font-size="90">🏇</text></svg>`;
     motion.hidden = true;
-    document.querySelector('#scene-labels').hidden = true;
   };
   if (!window.THREE) { fallback(); return; }
   try {
@@ -81,31 +80,6 @@
       h.userData={limbs,tail,arms,torso};h.scale.setScalar(.45);return h;
     }
     const horses=[];[0xd5ddeb,0x5f6d86,0xa9b6cc,0x243954,0x9a5a34,0x4a3222].forEach((color,i)=>{const h=horse(color,[0x1f4fd8,0xc65a00,0xc8283c,0xe0b020,0x7b3fc4,0xe05a9c][i],i+1);world.add(h);horses.push(h);});
-    // Project scene-bound callouts so labels and leader lines follow camera rotation.
-    const labelLayer=document.querySelector('#scene-labels');
-    const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
-    leaders.setAttribute('class','scene-leaders');labelLayer.prepend(leaders);
-    const callouts=[
-      {el:labelLayer.querySelector('.label-b'),parent:gantry,point:new T.Vector3(0,2.2,0),height:2.8}
-    ].map(c=>{c.line=document.createElementNS(ns,'line');leaders.append(c.line);return c;});
-    function updateLabels(){
-      world.updateMatrixWorld(true);camera.updateMatrixWorld(true);
-      const width=mount.clientWidth,height=mount.clientHeight;
-      leaders.setAttribute('viewBox',`0 0 ${width} ${height}`);
-      callouts.forEach(c=>{
-        const anchor=c.parent.localToWorld(c.point.clone());
-        const elevated=anchor.clone();elevated.y+=c.height;
-        const screen=anchor.project(camera),top=elevated.project(camera);
-        const ax=(screen.x+1)*width/2,ay=(1-screen.y)*height/2;
-        const x=Math.max(c.el.offsetWidth/2+8,Math.min(width-c.el.offsetWidth/2-8,(top.x+1)*width/2));
-        const y=Math.max(c.el.offsetHeight+8,(1-top.y)*height/2);
-        c.el.style.left=x+'px';c.el.style.top=y+'px';
-        const hidden=screen.z < -1 || screen.z > 1;
-        c.el.hidden=hidden;c.line.style.display=hidden?'none':'';
-        c.line.setAttribute('x1',x);c.line.setAttribute('y1',y);
-        c.line.setAttribute('x2',ax);c.line.setAttribute('y2',ay);
-      });
-    }
     let yaw=-.28,drag=false,lastX=0,time=0,last=0;
     function cameraUpdate(){camera.position.set(13*Math.sin(yaw),13.5,20*Math.cos(yaw));camera.lookAt(0,.2,0);}
     cameraUpdate();
@@ -121,7 +95,7 @@
         h.userData.limbs.forEach(({root,knee,phase})=>{root.rotation.z=Math.sin(time*12+phase+i)*.75;knee.rotation.z=Math.max(0,Math.sin(time*12+phase+i+1))*.9;});h.userData.tail.rotation.x=Math.sin(time*10+i)*.18;
         const joy=celebration(t);h.userData.torso.rotation.z=-.9+.45*joy;
         h.userData.arms.forEach(({shoulder,side})=>{shoulder.rotation.z=ARM_REST+(ARM_RAISED-ARM_REST)*joy+joy*Math.sin(time*9+i+side)*.18;shoulder.rotation.x=side*.35*joy;});});
-      renderer.render(scene,camera);updateLabels();
+      renderer.render(scene,camera);
     }requestAnimationFrame(frame);
     mount.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback();},{once:true});
   }catch(error){fallback();}
