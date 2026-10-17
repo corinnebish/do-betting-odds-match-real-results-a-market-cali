@@ -1,0 +1,62 @@
+name: Shared keyless Cloud Run deployment
+on:
+  workflow_call:
+    inputs:
+      service:
+        description: Cloud Run service name
+        required: true
+        type: string
+      source_directory:
+        description: Source folder inside the calling repository
+        default: .
+        required: false
+        type: string
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy:
+    if: github.repository_owner_id == '290819854' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: cloud-run-${{ inputs.service }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: app
+      - name: Read shared deployment configuration
+        uses: actions/checkout@v4
+        with:
+          repository: corinnebish/do-betting-odds-match-real-results-a-market-cali
+          ref: main
+          path: deployment-config
+          sparse-checkout: deployment
+      - name: Validate configuration and source
+        id: config
+        env:
+          SERVICE_NAME: ${{ inputs.service }}
+          SOURCE_DIRECTORY: ${{ inputs.source_directory }}
+        run: |
+          python3 deployment-config/deployment/validate-config.py \
+            deployment-config/deployment/cloud-config.json
+      - uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ steps.config.outputs.project_id }}
+          workload_identity_provider: ${{ steps.config.outputs.workload_identity_provider }}
+          service_account: ${{ steps.config.outputs.deployer_service_account }}
+      - uses: google-github-actions/setup-gcloud@v3
+      - name: Build and deploy
+        env:
+          PROJECT_ID: ${{ steps.config.outputs.project_id }}
+          REGION: ${{ steps.config.outputs.region }}
+          SERVICE: ${{ inputs.service }}
+          SOURCE: ${{ steps.config.outputs.source }}
+          BUILDER: ${{ steps.config.outputs.build_service_account }}
+          RUNTIME: ${{ steps.config.outputs.runtime_service_account }}
+        run: |
+          gcloud run deploy "$SERVICE" --source "$SOURCE" \
+            --project "$PROJECT_ID" --region "$REGION" \
+            --build-service-account "$BUILDER" --service-account "$RUNTIME" \
+            --memory 1Gi --cpu 1 --min-instances 0 --max-instances 2 \
+            --timeout 3600 --session-affinity --quiet
