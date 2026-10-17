@@ -1,24 +1,10 @@
 {
-  "rows_analyzed": 14182,
-  "races": 1150,
-  "date_range": [
-    "2016-09-28",
-    "2018-06-27"
-  ],
-  "roi": -0.26425750951910876,
-  "slope": {
-    "term": "slope",
-    "estimate": 1.0722114373576959,
-    "std_error": 0.03606457867430868,
-    "ci_low": 1.0015261620384395,
-    "ci_high": 1.1428967126769523
-  },
-  "audit": {
-    "catalog_races": 1539,
-    "retained_races": 1150,
-    "retained_runners": 14182,
-    "excluded_races": 389,
-    "key": "date + venue + race number",
-    "singapore_excluded": true
-  }
+  "country": "USA",
+  "track": "Churchill Downs",
+  "race": "2024 Kentucky Derby",
+  "date": "2024-05-04",
+  "horses": 20,
+  "races": 1,
+  "raw_probability_total": 1.2127739311683272,
+  "scope": "One race. Descriptive comparison, not a market-calibration study."
 }
