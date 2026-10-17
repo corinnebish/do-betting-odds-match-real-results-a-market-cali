@@ -55,6 +55,8 @@ Static preview: `python -m http.server 8765 --directory docs`. Optional browser 
 
 ## Deployment
 
-The Google Cloud Run address requires a repository Actions secret named `GCP_SA_KEY`. Once configured, pushes to `main` or **Actions → Redeploy to Cloud Run → Run workflow** verify the app and deploy it. The last deployment attempt was blocked because that secret was missing; a repository update alone does not update the live service.
+The Google Cloud connection is being migrated to keyless GitHub Workload Identity Federation for Corinne's repositories. See [deployment/README.md](deployment/README.md) for the one-time Cloud Shell setup, the exact IAM roles and branch restrictions, and the reusable workflow for other apps.
+
+The shared configuration remains unactivated until its public project number is supplied by the Google Cloud setup script. No `GCP_SA_KEY` or other long-lived key is required by the new workflow. The existing Cloud Run service and URL are retained; code changes alone do not verify a live deployment.
 
 </details>

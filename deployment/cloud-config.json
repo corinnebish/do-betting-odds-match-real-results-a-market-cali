@@ -1,0 +1,9 @@
+{
+  "project_id": "corinne-portfolio",
+  "project_number": "228994007025",
+  "workload_identity_provider": "projects/228994007025/locations/global/workloadIdentityPools/corinne-github/providers/github",
+  "deployer_service_account": "corinne-github-deployer@corinne-portfolio.iam.gserviceaccount.com",
+  "build_service_account": "projects/corinne-portfolio/serviceAccounts/corinne-source-builder@corinne-portfolio.iam.gserviceaccount.com",
+  "runtime_service_account": "corinne-app-runtime@corinne-portfolio.iam.gserviceaccount.com",
+  "region": "us-central1"
+}

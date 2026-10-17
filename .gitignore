@@ -7,3 +7,6 @@ data/raw/*
 
 .pytest_cache/
 data/processed/reviewed_runners.csv
+
+# Ephemeral GitHub Actions authentication files
+gha-creds-*.json

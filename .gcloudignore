@@ -1,0 +1,9 @@
+.gcloudignore
+.git
+.github
+__pycache__
+.pytest_cache
+.venv
+.env
+gha-creds-*.json
+data/raw
