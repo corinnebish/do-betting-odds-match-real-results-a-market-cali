@@ -80,7 +80,7 @@
       const arms=[-.24,.24].map(z=>{const shoulder=new T.Group();shoulder.position.set(.42,2.1,z);h.add(shoulder);box(.10,.60,.10,saddle,0,-.3,0,shoulder);shoulder.rotation.z=ARM_REST;return {shoulder,side:Math.sign(z)};});
       h.userData={limbs,tail,arms,torso};h.scale.setScalar(.45);return h;
     }
-    const horses=[];[0xd5ddeb,0x5f6d86,0xa9b6cc,0x243954].forEach((color,i)=>{const h=horse(color,[0x1f4fd8,0xc65a00,0xc8283c,0xe0b020][i],i+1);world.add(h);horses.push(h);});
+    const horses=[];[0xd5ddeb,0x5f6d86,0xa9b6cc,0x243954,0x9a5a34,0x4a3222].forEach((color,i)=>{const h=horse(color,[0x1f4fd8,0xc65a00,0xc8283c,0xe0b020,0x7b3fc4,0xe05a9c][i],i+1);world.add(h);horses.push(h);});
     // Project scene-bound callouts so labels and leader lines follow camera rotation.
     const labelLayer=document.querySelector('#scene-labels');
     const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
@@ -117,7 +117,7 @@
     new IntersectionObserver(([entry])=>visible=entry.isIntersecting).observe(mount);
     function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}new ResizeObserver(resize).observe(mount);resize();
     function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(!visible||document.hidden)return;if(!paused)time+=dt;
-      horses.forEach((h,i)=>{const t=time*(.18+i*.008)+i*1.55;const a=6.25+i*.63,b=2.52+i*.63;h.position.set(a*Math.cos(t),.27+Math.sin(time*12+i)*.045,b*Math.sin(t));h.rotation.y=Math.atan2(-b*Math.cos(t),-a*Math.sin(t));h.rotation.z=Math.sin(time*12+i)*.025;
+      horses.forEach((h,i)=>{const t=time*(.18+i*.008)+i*1.05;const a=6.2+i*.47,b=2.47+i*.47;h.position.set(a*Math.cos(t),.27+Math.sin(time*12+i)*.045,b*Math.sin(t));h.rotation.y=Math.atan2(-b*Math.cos(t),-a*Math.sin(t));h.rotation.z=Math.sin(time*12+i)*.025;
         h.userData.limbs.forEach(({root,knee,phase})=>{root.rotation.z=Math.sin(time*12+phase+i)*.75;knee.rotation.z=Math.max(0,Math.sin(time*12+phase+i+1))*.9;});h.userData.tail.rotation.x=Math.sin(time*10+i)*.18;
         const joy=celebration(t);h.userData.torso.rotation.z=-.9+.45*joy;
         h.userData.arms.forEach(({shoulder,side})=>{shoulder.rotation.z=ARM_REST+(ARM_RAISED-ARM_REST)*joy+joy*Math.sin(time*9+i+side)*.18;shoulder.rotation.x=side*.35*joy;});});
