@@ -53,10 +53,14 @@
     gantry.rotation.y=Math.atan2((8.85-5.82)*fx,(5.12-2.12)*fz);world.add(gantry);
     [-1.65,1.65].forEach(z=>box(.10,1.8,.10,mats.white,0,1.1,z,gantry));box(.15,.32,3.45,mats.orange,0,2.0,0,gantry);
     for(let i=0;i<13;i++)for(let j=0;j<2;j++)box(.17,.014,.24,(i+j)%2?mats.navy:mats.white,-.15+j*.17,.285,-1.55+i*.245,gantry);
-    // Low-poly cypress-like ornaments in neutral blue-gray.
-    [[-4.4,1],[4.3,-.8],[3.3,-1.15],[-4.8,-.6]].forEach(([x,z])=>{box(.1,.6,.1,mats.gray,x,.52,z);const tree=new T.Mesh(new T.ConeGeometry(.38,1.1,5),mats.dark);tree.position.set(x,1.18,z);tree.castShadow=true;world.add(tree);});
+    // Low-poly cypress-like trees with green foliage.
+    const trunk=material(0x6b4a2b),leaves=material(0x2f8a3e);
+    [[-4.4,1],[4.3,-.8],[3.3,-1.15],[-4.8,-.6]].forEach(([x,z])=>{box(.1,.6,.1,trunk,x,.52,z);const tree=new T.Mesh(new T.ConeGeometry(.38,1.1,5),leaves);tree.position.set(x,1.18,z);tree.castShadow=true;world.add(tree);});
     const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=256;const ctx=canvas.getContext('2d');ctx.fillStyle='#0a1f44';ctx.fillRect(0,0,1024,256);ctx.fillStyle='#819bd2';ctx.font='bold 100px Arial';ctx.textAlign='center';ctx.fillText('ODDS  /  REALITY',512,160);const tex=new T.CanvasTexture(canvas);tex.colorSpace=T.SRGBColorSpace;
     const lettering=new T.Mesh(new T.PlaneGeometry(6.3,1.57),new T.MeshBasicMaterial({map:tex}));lettering.rotation.x=-Math.PI/2;lettering.position.set(.6,.33,0);world.add(lettering);
+    const ARM_REST=.96,ARM_RAISED=2.84,CELEBRATE=.9;
+    // 0 at rest, 1 with arms raised: snaps up on crossing the finish, eases down over the next stretch of track.
+    function celebration(t){const since=((t-finishAngle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);return since<CELEBRATE?Math.min(1,since/.08,(CELEBRATE-since)/.2):0;}
     function horse(color,cloth,number){
       const h=new T.Group(),skin=material(color),saddle=material(cloth),mane=material(0x17243b);
       ball(1.05,.48,.4,skin,0,1.15,0,h);ball(.45,.4,.38,skin,-.65,1.14,0,h);
@@ -72,16 +76,16 @@
       [-.43,.43].forEach(z=>{const leg=box(.14,.58,.14,mats.navy,.08,1.38,z,h);leg.rotation.z=.45;box(.32,.12,.17,mats.navy,.21,1.09,z,h);});
       const torso=ball(.26,.39,.25,saddle,.12,1.99,0,h);torso.rotation.z=-.9;
       ball(.24,.25,.23,mats.white,.48,2.30,0,h);ball(.27,.17,.27,saddle,.48,2.47,0,h);
-      [-.24,.24].forEach(z=>{const arm=box(.10,.60,.10,saddle,.64,1.98,z,h);arm.rotation.z=-.8;});
-      h.userData={limbs,tail};h.scale.setScalar(.45);return h;
+      // Arms pivot at the shoulder so they can swing from the reins up into a celebration.
+      const arms=[-.24,.24].map(z=>{const shoulder=new T.Group();shoulder.position.set(.42,2.1,z);h.add(shoulder);box(.10,.60,.10,saddle,0,-.3,0,shoulder);shoulder.rotation.z=ARM_REST;return {shoulder,side:Math.sign(z)};});
+      h.userData={limbs,tail,arms,torso};h.scale.setScalar(.45);return h;
     }
-    const horses=[];[0xd5ddeb,0x5f6d86,0xa9b6cc,0x243954].forEach((color,i)=>{const h=horse(color,[0x1f4fd8,0xc65a00,0xf1f4ff,0x1f4fd8][i],i+1);world.add(h);horses.push(h);});
+    const horses=[];[0xd5ddeb,0x5f6d86,0xa9b6cc,0x243954].forEach((color,i)=>{const h=horse(color,[0x1f4fd8,0xc65a00,0xc8283c,0xe0b020][i],i+1);world.add(h);horses.push(h);});
     // Project scene-bound callouts so labels and leader lines follow camera rotation.
     const labelLayer=document.querySelector('#scene-labels');
     const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
     leaders.setAttribute('class','scene-leaders');labelLayer.prepend(leaders);
     const callouts=[
-      {el:labelLayer.querySelector('.label-a'),parent:stand,point:new T.Vector3(0,1.8,.02),height:2.4},
       {el:labelLayer.querySelector('.label-b'),parent:gantry,point:new T.Vector3(0,2.2,0),height:2.8}
     ].map(c=>{c.line=document.createElementNS(ns,'line');leaders.append(c.line);return c;});
     function updateLabels(){
@@ -90,7 +94,7 @@
       leaders.setAttribute('viewBox',`0 0 ${width} ${height}`);
       callouts.forEach(c=>{
         const anchor=c.parent.localToWorld(c.point.clone());
-        const elevated=anchor.clone();elevated.y+=width<500 && c.parent===stand ? 1.4 : c.height;
+        const elevated=anchor.clone();elevated.y+=c.height;
         const screen=anchor.project(camera),top=elevated.project(camera);
         const ax=(screen.x+1)*width/2,ay=(1-screen.y)*height/2;
         const x=Math.max(c.el.offsetWidth/2+8,Math.min(width-c.el.offsetWidth/2-8,(top.x+1)*width/2));
@@ -114,7 +118,9 @@
     function resize(){const w=mount.clientWidth,h=mount.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}new ResizeObserver(resize).observe(mount);resize();
     function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;if(!visible||document.hidden)return;if(!paused)time+=dt;
       horses.forEach((h,i)=>{const t=time*(.18+i*.008)+i*1.55;const a=6.25+i*.63,b=2.52+i*.63;h.position.set(a*Math.cos(t),.27+Math.sin(time*12+i)*.045,b*Math.sin(t));h.rotation.y=Math.atan2(-b*Math.cos(t),-a*Math.sin(t));h.rotation.z=Math.sin(time*12+i)*.025;
-        h.userData.limbs.forEach(({root,knee,phase})=>{root.rotation.z=Math.sin(time*12+phase+i)*.75;knee.rotation.z=Math.max(0,Math.sin(time*12+phase+i+1))*.9;});h.userData.tail.rotation.x=Math.sin(time*10+i)*.18;});
+        h.userData.limbs.forEach(({root,knee,phase})=>{root.rotation.z=Math.sin(time*12+phase+i)*.75;knee.rotation.z=Math.max(0,Math.sin(time*12+phase+i+1))*.9;});h.userData.tail.rotation.x=Math.sin(time*10+i)*.18;
+        const joy=celebration(t);h.userData.torso.rotation.z=-.9+.45*joy;
+        h.userData.arms.forEach(({shoulder,side})=>{shoulder.rotation.z=ARM_REST+(ARM_RAISED-ARM_REST)*joy+joy*Math.sin(time*9+i+side)*.18;shoulder.rotation.x=side*.35*joy;});});
       renderer.render(scene,camera);updateLabels();
     }requestAnimationFrame(frame);
     mount.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback();},{once:true});
