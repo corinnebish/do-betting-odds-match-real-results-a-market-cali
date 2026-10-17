@@ -5,7 +5,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let paused = reduced, visible = true;
   const fallback = () => {
-    mount.innerHTML = `<svg viewBox="0 0 800 500" role="img" aria-label="Illustrated oval racing track"><defs><linearGradient id="track-shade" x2="0" y2="1"><stop stop-color="#6283c9"/><stop offset="1" stop-color="#1F4FD8"/></linearGradient></defs><ellipse cx="400" cy="310" rx="340" ry="160" fill="#071329"/><ellipse cx="400" cy="275" rx="340" ry="155" fill="url(#track-shade)"/><ellipse cx="400" cy="275" rx="245" ry="98" fill="#0a1f44"/><ellipse cx="400" cy="275" rx="291" ry="125" fill="none" stroke="#fff" stroke-opacity=".55" stroke-dasharray="8 12"/><text x="210" y="320" font-size="85">🏇</text><text x="420" y="185" font-size="70">🏇</text><text x="550" y="350" font-size="90">🏇</text></svg>`;
+    mount.innerHTML = `<svg viewBox="0 0 800 500" role="img" aria-label="Illustrated oval racing track"><defs><linearGradient id="track-shade" x2="0" y2="1"><stop stop-color="#6283c9"/><stop offset="1" stop-color="#1F4FD8"/></linearGradient></defs><ellipse cx="400" cy="310" rx="340" ry="160" fill="#071329"/><ellipse cx="400" cy="275" rx="340" ry="155" fill="url(#track-shade)"/><ellipse cx="400" cy="275" rx="245" ry="98" fill="#0a1f44"/><ellipse cx="400" cy="275" rx="291" ry="125" fill="none" stroke="#fff" stroke-opacity=".55" stroke-dasharray="8 12"/><path d="M400 373V430" stroke="#fff" stroke-width="14"/><path d="M400 373V430" stroke="#0a1f44" stroke-width="7" stroke-dasharray="7 7"/><text x="210" y="320" font-size="85">🏇</text><text x="420" y="185" font-size="70">🏇</text><text x="550" y="350" font-size="90">🏇</text></svg>`;
     motion.hidden = true;
   };
   if (!window.THREE) { fallback(); return; }
@@ -42,9 +42,11 @@
     [-4,-1].forEach(x=>box(.07,1.1,.07,mats.gray,x,1.13,-2.65));
     // Finish gantry and checker stripe.
     const finishAngle=.78;const fx=Math.cos(finishAngle),fz=Math.sin(finishAngle);
-    const gantry=new T.Group();gantry.position.set(7.2*fx,0,3.5*fz);gantry.rotation.y=-finishAngle;world.add(gantry);
+    const gantry=new T.Group();gantry.position.set((5.82+8.85)/2*fx,0,(2.12+5.12)/2*fz);
+    // Local z spans the vector from the inner rail to the outer rail.
+    gantry.rotation.y=Math.atan2((8.85-5.82)*fx,(5.12-2.12)*fz);world.add(gantry);
     [-1.65,1.65].forEach(z=>box(.10,1.8,.10,mats.white,0,1.1,z,gantry));box(.15,.32,3.45,mats.orange,0,2.0,0,gantry);
-    for(let i=0;i<13;i++)for(let j=0;j<2;j++)box(.17,.014,.24,(i+j)%2?mats.navy:mats.white,-.15+j*.17,.245,-1.55+i*.245,gantry);
+    for(let i=0;i<13;i++)for(let j=0;j<2;j++)box(.17,.014,.24,(i+j)%2?mats.navy:mats.white,-.15+j*.17,.285,-1.55+i*.245,gantry);
     // Low-poly cypress-like ornaments in neutral blue-gray.
     [[-4.4,1],[4.3,-.8],[3.3,-1.15],[-4.8,-.6]].forEach(([x,z])=>{box(.1,.6,.1,mats.gray,x,.52,z);const tree=new T.Mesh(new T.ConeGeometry(.38,1.1,5),mats.dark);tree.position.set(x,1.18,z);tree.castShadow=true;world.add(tree);});
     const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=256;const ctx=canvas.getContext('2d');ctx.fillStyle='#0a1f44';ctx.fillRect(0,0,1024,256);ctx.fillStyle='#819bd2';ctx.font='bold 100px Arial';ctx.textAlign='center';ctx.fillText('ODDS  /  REALITY',512,160);const tex=new T.CanvasTexture(canvas);tex.colorSpace=T.SRGBColorSpace;
