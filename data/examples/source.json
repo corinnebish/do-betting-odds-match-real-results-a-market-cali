@@ -1,10 +1,11 @@
 {
-  "title": "2024 Kentucky Derby, Churchill Downs, race 12",
-  "date": "2024-05-04",
-  "source_url": "https://irp.cdn-website.com/c33a1b13/files/uploaded/Results_2024_Kentucky_Derby.pdf",
+  "title": "2026 Kentucky Derby, Churchill Downs, race 12",
+  "date": "2026-05-02",
+  "source_url": "https://irp.cdn-website.com/c33a1b13/files/uploaded/Derby_horses_2026_Equibase_Chart_revised.pdf",
   "publisher": "Equibase Company LLC",
-  "method": "Manual transcription of 20 horse names, program numbers, official finishes, final odds-to-one and ranks at quarter, half, three-quarter, mile and stretch checkpoints.",
-  "rights": "Copyright 2024 Equibase Company LLC. Publicly viewable chart, not an open-licensed bulk dataset.",
+  "method": "Manual transcription of 18 starters, final odds, finishes and six checkpoint ranks from the revised Equibase chart (which corrects mile and stretch positions in the original chart).",
+  "rights": "Copyright 2026 Equibase Company LLC. Publicly viewable chart, not an open-licensed bulk dataset.",
   "scope": "One race; not a representative US calibration sample.",
-  "animation": "Interpolates recorded rank between checkpoints, not time, speed or distance gaps."
+  "animation": "Interpolates recorded rank between checkpoints, not time, speed or distance gaps.",
+  "original_url": "https://www.equibase.com/static/chart/pdf/CD050226USA12.pdf"
 }

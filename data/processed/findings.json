@@ -1,10 +1,10 @@
 {
   "country": "USA",
   "track": "Churchill Downs",
-  "race": "2024 Kentucky Derby",
-  "date": "2024-05-04",
-  "horses": 20,
+  "race": "2026 Kentucky Derby",
+  "date": "2026-05-02",
+  "horses": 18,
   "races": 1,
-  "raw_probability_total": 1.2127739311683272,
+  "raw_probability_total": 1.2127076978832185,
   "scope": "One race. Descriptive comparison, not a market-calibration study."
 }

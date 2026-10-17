@@ -12,7 +12,7 @@ with sync_playwright() as p:
     page.goto('http://127.0.0.1:8765',wait_until='networkidle')
     assert page.locator('#racetrack canvas').count()==1
     assert page.locator('#motion-toggle').get_attribute('aria-pressed')=='true'
-    assert page.evaluate('RacingDashboard.getState().rows')==20
+    assert page.evaluate('RacingDashboard.getState().rows')==18
     assert page.evaluate('RacingDashboard.getState().track')=='Churchill Downs'
     page.screenshot(path=str(ROOT/'screenshots/hero-desktop.png'))
     page.select_option('#field-filter','favorites')
@@ -22,27 +22,27 @@ with sync_playwright() as p:
     downloaded=list(csv.DictReader(io.StringIO(Path(info.value.path()).read_text())))
     assert len(downloaded)==5 and all(int(h['market_rank'])<=5 for h in downloaded)
     assert sum(float(h['fair_implied']) for h in downloaded)<1
-    page.select_option('#evidence-horse','17')
-    assert page.locator('#evidence-name').inner_text()=='Fierceness'
+    page.select_option('#evidence-horse','18')
+    assert page.locator('#evidence-name').inner_text()=='Further Ado'
     assert '$0.00' in page.locator('#bet-result').inner_text()
-    page.select_option('#evidence-horse','3')
+    page.select_option('#evidence-horse','19')
     page.locator('#stake').fill('10')
-    assert '$196.10' in page.locator('#bet-result').inner_text()
-    assert '$186.10' in page.locator('#bet-result').inner_text()
+    assert '$241.20' in page.locator('#bet-result').inner_text()
+    assert '$231.20' in page.locator('#bet-result').inner_text()
     page.select_option('#field-filter','longshots')
     assert all(float(h['odds_to_one'])>=15 for h in page.evaluate('RACING_DATA.us.filter(h=>RacingDashboard.getState().programs.includes(h.program))'))
     page.locator('#reset').click()
-    assert page.evaluate('RacingDashboard.getState().rows')==20
+    assert page.evaluate('RacingDashboard.getState().rows')==18
     page.select_option('#field-order','finish')
-    assert page.evaluate('RacingDashboard.getState().programs[0]')==3
+    assert page.evaluate('RacingDashboard.getState().programs[0]')==19
     page.locator('#rank-chart').evaluate('(e)=>e.scrollIntoView({behavior:"instant",block:"start"})')
     page.screenshot(path=str(ROOT/'screenshots/evidence-desktop.png'))
     page.locator('#race-progress').fill('5')
-    assert page.locator('#leader-label').inner_text()=='Winner: Mystik Dan'
-    page.select_option('#horse-select','17')
-    assert page.locator('#evidence-name').inner_text()=='Fierceness'
-    assert '15th' in page.locator('#horse-stats').inner_text()
-    page.select_option('#horse-select','3');page.locator('#race-progress').fill('0')
+    assert page.locator('#leader-label').inner_text()=='Winner: Golden Tempo'
+    page.select_option('#horse-select','18')
+    assert page.locator('#evidence-name').inner_text()=='Further Ado'
+    assert '11th' in page.locator('#horse-stats').inner_text()
+    page.select_option('#horse-select','19');page.locator('#race-progress').fill('0')
     page.locator('#derby').evaluate('(e)=>e.scrollIntoView({behavior:"instant",block:"start"})')
     page.wait_for_timeout(300);page.locator('#replay').click();page.wait_for_timeout(500)
     assert page.evaluate('RacingDashboard.getState().progress')>0

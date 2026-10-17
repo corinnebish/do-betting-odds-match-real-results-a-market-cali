@@ -1,4 +1,4 @@
-# Against the odds · The 2024 Kentucky Derby
+# Against the odds · The 2026 Kentucky Derby
 
 **[Open the live interactive project →](https://pc-do-betting-odds-match-real-results-a-mar-2uen7v5wuq-uc.a.run.app/)**
 
@@ -6,7 +6,7 @@ View the complete project in your browser. **No installation, download, or accou
 
 An interactive USA-only portfolio story by Corinne Bish, written for people who do not follow horse racing.
 
-The entire project covers the **2024 Kentucky Derby at Churchill Downs, Louisville, Kentucky, USA**, on May 4, 2024. It contains all 20 starters from one real American race.
+The entire project covers the **2026 Kentucky Derby at Churchill Downs, Louisville, Kentucky, USA**, on May 2, 2026. It contains all 18 starters from one real American race.
 
 ![Animated racing scene](screenshots/hero-desktop.png)
 
@@ -16,18 +16,18 @@ The entire project covers the **2024 Kentucky Derby at Churchill Downs, Louisvil
 - Plain-English examples explain odds, adjusted chances, favorites and longshots.
 - Linked charts compare rank by final odds with official finish, and show each horse’s adjusted chance of winning. Filter to all horses, the five lowest-odds horses, or longshots; sort by odds or finish.
 - Choose any horse to inspect its odds and finish. A historical bet-size illustration shows the known return and net profit/loss.
-- Scrub a replay through six published race checkpoints, or follow any of the 20 horses. Movement between checkpoints is illustrative, not measured speed or distance gaps.
+- Scrub a replay through six published race checkpoints, or follow any of the 18 horses. Movement between checkpoints is illustrative, not measured speed or distance gaps.
 - Download precisely the horse records selected in the charts.
 
 ## What happened
 
-Mystik Dan won at **18.61-to-1**, seventh in the ranking by odds, and returned **$39.22 on a $2 win bet**. Favorite Fierceness finished **15th**. These are descriptive facts about one race: they do not establish market bias, a reliable win rate, or a repeatable betting advantage.
+Golden Tempo won at **23.12-to-1**, ninth in the ranking by odds, and returned **$48.24 on a $2 win bet**. Favorite Further Ado finished **11th**. These are descriptive facts about one race: they do not establish market bias, a reliable win rate, or a repeatable betting advantage.
 
-US odds-to-one describe profit. Adding one includes the original stake. Raw chance is `1 / (odds + 1)`; adjusted chance divides each horse’s raw chance by the total across all 20 horses. Filtering never renormalizes a subset into a different race.
+US odds-to-one describe profit. Adding one includes the original stake. Raw chance is `1 / (odds + 1)`; adjusted chance divides each horse’s raw chance by the total across all 18 horses. Filtering never renormalizes a subset into a different race.
 
 ## Free source
 
-[Equibase official result chart: Churchill Downs, May 4, 2024, race 12](https://irp.cdn-website.com/c33a1b13/files/uploaded/Results_2024_Kentucky_Derby.pdf). Twenty factual runner records, final odds and checkpoint ranks were transcribed into `data/examples/kentucky_derby_2024.csv`. © 2024 Equibase Company LLC. Public viewing does not imply a general redistribution license. Provenance and an input SHA-256 fingerprint are included in the snapshot.
+[Equibase official result chart: Churchill Downs, May 2, 2026, race 12](https://irp.cdn-website.com/c33a1b13/files/uploaded/Derby_horses_2026_Equibase_Chart_revised.pdf). Eighteen factual runner records, final odds and checkpoint ranks were transcribed into `data/examples/kentucky_derby_2026.csv`. © 2026 Equibase Company LLC. Public viewing does not imply a general redistribution license. Provenance and an input SHA-256 fingerprint are included in the snapshot.
 
 All race observations in the project are from the USA. Horse names may carry breeding-country suffixes; these do not indicate another race venue. This is an independent historical portfolio project, not a live betting or prediction service. No paid feed or API key is required.
 
